@@ -1,0 +1,25 @@
+Barcodes:
+                                       noNoAdapter              0
+                                           noNoUMI              0
+                                            noNoCB              0
+                                           noNinCB              0
+                                          noNinUMI            358
+                                  noUMIhomopolymer            707
+                                       noNoWLmatch          50037
+                                       noTooManyMM              0
+                                noTooManyWLmatches              0
+                                   yesWLmatchExact        7530489
+                               yesOneWLmatchWithMM          19534
+                              yesMultWLmatchWithMM          84800
+Genes:
+                                        noUnmapped         278029
+                                       noNoFeature        3060392
+                                      MultiFeature         419262
+                       subMultiFeatureMultiGenomic         333163
+                                noTooManyWLmatches          28645
+                              noMMtoWLwithoutExact           7148
+                                        yesWLmatch        3841347
+                                yessubWLmatchExact        3829826
+                       yessubWLmatch_UniqueFeature        3841347
+                                   yesCellBarcodes           5200
+                                           yesUMIs        1689978
