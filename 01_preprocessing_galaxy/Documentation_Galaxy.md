@@ -1,5 +1,7 @@
 # Part 1: Pre-processing of 10X Single-Cell RNA Datasets (Galaxy)
 
+**File:** `Documentation_Galaxy.md`
+
 **Tutorial source:** [Galaxy Training Network — Pre-processing of 10X scRNA Datasets](https://training.galaxyproject.org/training-material/topics/single-cell/tutorials/scrna-preprocessing-tenx/tutorial.html)
 
 ---
@@ -9,6 +11,8 @@
 The goal of this tutorial is to take raw sequencing output from a 10X Chromium single-cell RNA-seq experiment and convert it into a clean, filtered gene expression matrix that is ready for downstream analysis. This is done entirely through the Galaxy platform (no coding required) using two tools in sequence: **STARsolo** for alignment and quantification, and **DropletUtils** for filtering empty droplets.
 
 The pipeline answers a core challenge in scRNA-seq: raw data contains tens of thousands of "cell barcodes," most of which correspond to empty droplets rather than real cells. The preprocessing workflow identifies and retains only the barcodes that represent genuine, high-quality cells.
+
+![Galaxy Workflow](Workflow.png)
 
 ---
 
@@ -98,7 +102,7 @@ STARsolo was run with the subsampled FASTQ files, the GRCh37 genome, and the 10X
 
 **Key statistic from the Feature Statistic Summaries:** `yesCellBarcodes` reported **5,200 detected barcodes** at this stage — far more than the expected ~300 cells, because empty droplets have not yet been filtered. The `yessubWLmatch_UniqueFeature` metric had the highest value (reads unambiguously mapping to a single gene), which is the desired outcome. The `noNoFeature` count (reads mapping to the genome but not to any annotated gene) was relatively high, but this is expected behaviour even in the original non-subsampled datasets.
 
-**MultiQC** was run on the STARsolo log to visualise mapping quality.
+**MultiQC** was run on the STARsolo log to visualise mapping quality. The full report is available at [`qc_reports/multiqc_RNA_STARsolo_logs_html.html`](qc_reports/multiqc_RNA_STARsolo_logs_html.html).
 
 ### Step 2 — DropletUtils (Cell Filtering)
 
@@ -110,8 +114,12 @@ Used the built-in Cell Ranger-style knee-point detection. Result: **272 high-qua
 **Run 2 — Introspective method (barcode rank plot):**
 Generated a barcode rank plot showing log(total UMI count) on the y-axis vs. log(barcode rank) on the x-axis. The knee and inflection points on the curve mark the boundary between cells (high RNA content) and empty droplets (low RNA content). This plot provides a visual confirmation of where to set the filtering threshold.
 
+![Barcode Rank Plot](qc_reports/barcode_rank_plot.png)
+
 **Run 3 — Custom filtering:**
 Applied a custom UMI lower-bound threshold informed by the rank plot. Result: **279 high-quality cells** retained — slightly more than Run 1, as the custom threshold was tuned to the data.
+
+![Total UMI Count Plot](qc_reports/Total_UMI_count_plot.png)
 
 ---
 
@@ -119,10 +127,13 @@ Applied a custom UMI lower-bound threshold informed by the rank plot. Result: **
 
 After the full pipeline, the key deliverables are:
 
-**Filtered count matrix (MEX format):**
-- `matrix.mtx` — sparse matrix of UMI counts; only barcodes passing the DropletUtils filter are retained
-- `barcodes.tsv` — the 279 cell barcodes that passed filtering
-- `features.tsv` — the list of genes quantified
+**Raw STARsolo count matrix:**
+- `data/RNA_STARSolo_count_matrix.mtx` — the unfiltered sparse matrix output directly from STARsolo, containing all 5,200 detected barcodes (including empty droplets)
+
+**Filtered count matrix (MEX format, DropletUtils output):**
+- `data/matrix.mtx` — sparse matrix of UMI counts; only barcodes passing the DropletUtils custom filter are retained
+- `data/barcodes.tsv` — the 279 cell barcodes that passed filtering
+- `data/genes.tsv` — the list of genes quantified
 
 **Interpretation:** Each row in the matrix is a gene, each column is a cell, and each value is the number of UMI-deduplicated RNA molecules detected. The sparsity of this matrix is high (most entries are zero), which is normal for scRNA-seq data — most genes are not detected in most cells.
 
@@ -132,16 +143,24 @@ This filtered matrix is the direct input for Part 2 (Scanpy analysis).
 
 ---
 
-## Files in This Folder
+## Repository Structure
 
 ```
-part1-galaxy-preprocessing/
-├── README.md                  ← This file
-└── outputs/
-    ├── matrix.mtx             ← Filtered sparse count matrix
-    ├── barcodes.tsv           ← Filtered cell barcodes (279 cells)
-    ├── features.tsv           ← Gene list
-    └── screenshots/           ← Galaxy history and tool parameter screenshots
+01_preprocessing_galaxy/
+├── Documentation_Galaxy.md                              ← This file
+├── Workflow.png                                         ← Galaxy workflow diagram
+├── data/
+│   ├── RNA_STARSolo_count_matrix.mtx                   ← Raw STARsolo count matrix (pre-filtering)
+│   ├── matrix.mtx                                      ← Filtered sparse count matrix (DropletUtils output)
+│   ├── barcodes.tsv                                     ← Filtered cell barcodes (279 cells)
+│   └── genes.tsv                                        ← Gene list
+├── logs/
+│   ├── RNA_STARSolo_log.txt                             ← STARsolo run log
+│   └── RNA_STARSolo_Barcode_Feature_Statistic_Summaries.txt  ← Per-barcode mapping statistics
+└── qc_reports/
+    ├── multiqc_RNA_STARsolo_logs_html.html              ← MultiQC report (mapping quality)
+    ├── barcode_rank_plot.png                            ← DropletUtils knee/inflection plot
+    └── Total_UMI_count_plot.png                         ← Total UMI distribution plot
 ```
 
 ---
