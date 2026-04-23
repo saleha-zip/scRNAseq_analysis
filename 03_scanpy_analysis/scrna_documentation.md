@@ -1,7 +1,7 @@
 # Part 2: Basic scRNA-seq Preprocessing and Clustering
 
 **Notebook:** `basic-scrna-tutorial_updated.ipynb`  
-**Original author:** [Taha Shmi](https://github.com/tahashmi/algos/blob/main/basic-scrna-tutorial_updated.ipynb), adapted from the [scverse tutorials](https://scverse-tutorials.readthedocs.io/en/latest/)  
+**Original author:** [Tahashmi](https://github.com/tahashmi/algos/blob/main/basic-scrna-tutorial_updated.ipynb), adapted from the [scverse tutorials](https://scverse-tutorials.readthedocs.io/en/latest/)  
 **Based on:** [OpenProblems NeurIPS 2021 benchmarking dataset](https://openproblems.bio/competitions/neurips_2021/) — bone marrow mononuclear cells from healthy human donors, measured with 10X Multiome
 
 ---
